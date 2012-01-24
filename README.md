@@ -9,12 +9,14 @@ Features
 
 (or, "There are a dozen other implementations for class-based inheritance in JavaScript, why should I use this?")
 
-* SMALL! 259 bytes minified and gzipped
-* allows for overriding Object.prototype functions without affecting Object.prototype itself
+* **SMALL!** 279 bytes minified and gzipped
+* override base prototype members without affecting base prototype itself
+* support for private properties and methods
 
 
 Usage
 -----
+
 
 ### Creating a base class ###
 
@@ -40,6 +42,7 @@ Usage
             };
         }
     });
+
 
 ### Creating subclasses ###
 
@@ -74,12 +77,12 @@ Usage
 
     var Human = Class.create({
         base: Primate, // Human extends Primate
-        constructor: function () {
+        constructor: function (species) {
             // call super ctor, executing Primate() before Human()
             this._base.apply(this, arguments);
 
             console.info('In Human constructor');
-            this.species = 'Homo sapiens';
+            this.species = species;
         },
         // first argument represents the base prototype,
         // or may be omitted if base prototype isn't needed
@@ -99,6 +102,38 @@ Usage
             this.think = function (thought) {
                 console.info('In Human.prototype.think()');
                 console.log(this.toType(), 'thinks about', thought);
+            };
+        }
+    });
+
+
+### Private variables and functions, and no constructor ###
+
+    var BigMouth = Class.create({
+        base: Human, // BigMouth extends Human
+        // classes without constructors execute the base constructor
+        prototype: function (_base) {
+            // private variable
+            var secret = 'Soylent Green is people!.';
+
+            // private function
+            var tellSecret = function () {
+                console.log(this.toType(), 'tells a secret:', secret);
+            };
+
+            this.toString = function () {
+                return '[object BigMouth]';
+            };
+
+            this.say = function (message) {
+                // log Human before Primate
+                console.info('In BigMouth.prototype.say()');
+
+                // execute base method
+                _base.say.apply(this, arguments);
+
+                // execute private function
+                tellSecret.apply(this);
             };
         }
     });

@@ -28,7 +28,7 @@
     OTHER DEALINGS IN THE SOFTWARE.
     -->
     <title>Class</title>
-    <link href="http://alexgorbatchev.com/pub/sh/current/styles/shThemeDefault.css" rel="stylesheet" type="text/css" />
+    <link href="//alexgorbatchev.com/pub/sh/current/styles/shThemeDefault.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
     <header>
@@ -40,10 +40,12 @@
     <h3>Features</h3>
     <p>(or, "There are a dozen other implementations for class-based inheritance in JavaScript, why should I use this?")</p>
     <ul>
-        <li><strong>SMALL!</strong> 259 bytes minified and gzipped</li>
-        <li>allows for overriding Object.prototype functions without affecting Object.prototype itself</li>
+        <li><strong>SMALL!</strong> 279 bytes minified and gzipped</li>
+        <li>override base prototype members without affecting base prototype itself</li>
+        <li>support for private properties and methods</li>
     </ul>
     <h3>Usage</h3>
+    <p>Open your console to see these classes in action.</p>
     <h4>Creating a base class</h4>
     <pre class="brush: js">
         // class extends Object if base is not specified
@@ -102,12 +104,12 @@
 
         var Human = Class.create({
             base: Primate, // Human extends Primate
-            constructor: function () {
+            constructor: function (species) {
                 // call super ctor, executing Primate() before Human()
                 this._base.apply(this, arguments);
 
                 console.info('In Human constructor');
-                this.species = 'Homo sapiens';
+                this.species = species;
             },
             // first argument represents the base prototype,
             // or may be omitted if base prototype isn't needed
@@ -131,7 +133,37 @@
             }
         });
     </pre>
-    <p>Open your console to see the results of these class definitions.</p>
+    <h4>Private variables and functions, and no constructor</h4>
+    <pre class="brush: js">
+        var BigMouth = Class.create({
+            base: Human, // BigMouth extends Human
+            // classes without constructors execute the base constructor
+            prototype: function (_base) {
+                // private variable
+                var secret = 'Soylent Green is people!.';
+
+                // private function
+                var tellSecret = function () {
+                    console.log(this.toType(), 'tells a secret:', secret);
+                };
+
+                this.toString = function () {
+                    return '[object BigMouth]';
+                };
+
+                this.say = function (message) {
+                    // log Human before Primate
+                    console.info('In BigMouth.prototype.say()');
+
+                    // execute base method
+                    _base.say.apply(this, arguments);
+
+                    // execute private function
+                    tellSecret.apply(this);
+                };
+            }
+        });
+    </pre>
     <footer>
         <h3>License</h3>
         <a href="http://www.opensource.org/licenses/mit-license.php">MIT License</a>
@@ -200,12 +232,12 @@
 
         var Human = Class.create({
             base: Primate, // Human extends Primate
-            constructor: function () {
+            constructor: function (species) {
                 // call super ctor, executing Primate() before Human()
                 this._base.apply(this, arguments);
 
                 console.info('In Human constructor');
-                this.species = 'Homo sapiens';
+                this.species = species;
             },
             // first argument represents the base prototype,
             // or may be omitted if base prototype isn't needed
@@ -228,6 +260,35 @@
                 };
             }
         });
+
+        var BigMouth = Class.create({
+            base: Human, // BigMouth extends Human
+            // classes without constructors execute the base constructor
+            prototype: function (_base) {
+                // private variable
+                var secret = 'Soylent Green is people!.';
+
+                // private function
+                var tellSecret = function () {
+                    console.log(this.toType(), 'tells a secret:', secret);
+                };
+
+                this.toString = function () {
+                    return '[object BigMouth]';
+                };
+
+                this.say = function (message) {
+                    // log Human before Primate
+                    console.info('In BigMouth.prototype.say()');
+
+                    // execute base method
+                    _base.say.apply(this, arguments);
+
+                    // execute private function
+                    tellSecret.apply(this);
+                };
+            }
+        });
     </script>
     <script type="text/javascript">
         (function(){
@@ -246,27 +307,38 @@
             console.log('b instanceof Animal: ', b instanceof Animal); // true
             console.log('b.who: ', b.who); // I am a primate
             console.warn("Calling b.feed('figs')...");
-            b.feed('figs'); // Primate consumes figs
+            b.feed('figs'); // primate consumes figs
             console.warn("Calling b.burp()...");
-            b.burp(); // Primate burps
+            b.burp(); // primate burps
             console.warn("Calling b.say('uh')...");
-            b.say('uh'); // Primate says: uh
+            b.say('uh'); // primate says: uh
 
             console.warn('Instantiating "c" as Human...');
-            var c = new Human();
+            var c = new Human('Homo sapiens');
             console.log('c: ', c); // notice name of the class in debug tool
             console.log('c instanceof Human: ', c instanceof Human); // true
             console.log('c instanceof Primate: ', c instanceof Primate); // true
             console.log('c instanceof Animal: ', c instanceof Animal); // true
             console.log('c.who: ', c.who); // I am a human
             console.warn("Calling c.feed('beer')...");
-            c.feed('beer'); // Human consumes beer
+            c.feed('beer'); // human consumes beer
             console.warn("Calling c.burp()...");
-            c.burp(); // Human burps
+            c.burp(); // human burps
             console.warn("Calling c.say('hello')...");
-            c.say('hello'); // Human says: hello
+            c.say('hello'); // human says: hello
             console.warn("Calling c.think('the meaning of life')...");
-            c.think('the meaning of life'); // Human thinks about the meaning of life
+            c.think('the meaning of life'); // human thinks about the meaning of life
+
+            console.warn('Instantiating "d" as BigMouth...');
+            var d = new BigMouth('Homo sapiens');
+            console.log('d: ', d); // notice name of the class in debug tool
+            console.log('d instanceof BigMouth: ', d instanceof BigMouth); // true
+            console.log('d instanceof Human: ', d instanceof Human); // true
+            console.log('d instanceof Primate: ', d instanceof Primate); // true
+            console.log('d instanceof Animal: ', d instanceof Animal); // true
+            console.log('d.who: ', d.who); // I am a bigmouth
+            console.warn("Calling d.say('SPOILER ALERT!')...");
+            d.say('SPOILER ALERT!'); // bigmouth says: SPOILER ALERT! and a secret...
         })();
     </script>
 </body>
