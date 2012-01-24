@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<!--[if lt IE 9]><html class="no-js oldie" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+    <meta charset="utf-8" />
+    <!--
+    Copyright (c) 2012 Oroboto. All rights reserved.
+
+    Permission is hereby granted, free of charge, to any person
+    obtaining a copy of this software and associated documentation
+    files (the "Software"), to deal in the Software without
+    restriction, including without limitation the rights to use,
+    copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the
+    Software is furnished to do so, subject to the following
+    conditions:
+
+    The above copyright notice and this permission notice shall be
+    included in all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+    EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+    OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+    NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+    HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+    WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+    OTHER DEALINGS IN THE SOFTWARE.
+    -->
+    <title>Class</title>
+    <link href="http://alexgorbatchev.com/pub/sh/current/styles/shThemeDefault.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <header>
+        <hgroup>
+            <h1>Class</h1>
+            <h2>Super lightweight class-based inheritance for JavaScript</h2>
+        </hgroup>
+    </header>
+    <h3>Features</h3>
+    <p>(or, "There are a dozen other implementations for class-based inheritance in JavaScript, why should I use this?")</p>
+    <ul>
+        <li><strong>SMALL!</strong> 259 bytes minified and gzipped</li>
+        <li>allows for overriding Object.prototype functions without affecting Object.prototype itself</li>
+    </ul>
+    <h3>Usage</h3>
+    <h4>Creating a base class</h4>
+    <pre class="brush: js">
+        // class extends Object if base is not specified
+        var Animal = Class.create({
+            constructor: function () {
+                console.info('In Animal constructor');
+                this.kingdom = 'Animalia';
+                this.who = 'I am an ' + this.toType();
+            },
+            prototype: function () {
+                this.toString = function () {
+                    return '[object Animal]';
+                };
+
+                this.toType = function () {
+                    return this.toString().match(/\s([a-zA-Z]+)/)[1].toLowerCase();
+                };
+
+                this.feed = function (food) {
+                    console.info('In Animal.prototype.feed()');
+                    console.log(this.toType(), 'consumes', food);
+                };
+            }
+        });
+    </pre>
+    <h4>Creating subclasses</h4>
+    <pre class="brush: js">
+        var Primate = Class.create({
+            base: Animal, // Primate extends Animal
+            constructor: function () {
+                // call super ctor, executing Animal() before Primate()
+                this._base.apply(this, arguments);
+
+                console.info('In Primate constructor');
+                this.order = 'Primates';
+                // this.who will override the base property
+                // while this.toType() will execute the base method
+                this.who = 'I am a ' + this.toType();
+            },
+            prototype: function () {
+                this.toString = function () {
+                    return '[object Primate]';
+                };
+
+                this.say = function (message) {
+                    console.info('In Primate.prototype.say()');
+                    console.log(this.toType(), 'says:', message);
+                };
+
+                this.burp = function () {
+                    console.info('In Primate.prototype.burp()');
+                    console.log(this.toType(), 'burps');
+                };
+            }
+        });
+
+        var Human = Class.create({
+            base: Primate, // Human extends Primate
+            constructor: function () {
+                // call super ctor, executing Primate() before Human()
+                this._base.apply(this, arguments);
+
+                console.info('In Human constructor');
+                this.species = 'Homo sapiens';
+            },
+            // first argument represents the base prototype,
+            // or may be omitted if base prototype isn't needed
+            prototype: function (_base) {
+                this.toString = function () {
+                    return '[object Human]';
+                };
+
+                this.say = function (message) {
+                    // log Human before Primate
+                    console.info('In Human.prototype.say()');
+
+                    // execute base method
+                    _base.say.apply(this, arguments);
+                };
+
+                this.think = function (thought) {
+                    console.info('In Human.prototype.think()');
+                    console.log(this.toType(), 'thinks about', thought);
+                };
+            }
+        });
+    </pre>
+    <p>Open your console to see the results of these class definitions.</p>
+    <footer>
+        <h3>License</h3>
+        <a href="http://www.opensource.org/licenses/mit-license.php">MIT License</a>
+        <p class="copyright">&copy; 2012 Oroboto. All rights reserved.</p>
+    </footer>
+    <a href="https://github.com/oroboto/class"><img style="position:absolute; top:0; right:0; border:0;" src="https://d3nwyuy0nl342s.cloudfront.net/img/71eeaab9d563c2b3c590319b398dd35683265e85/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67" alt="Fork me on GitHub" /></a>
+    <script src="//alexgorbatchev.com/pub/sh/current/scripts/shCore.js" type="text/javascript"></script>
+    <script src="//alexgorbatchev.com/pub/sh/current/scripts/shAutoloader.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        SyntaxHighlighter.autoloader('js //alexgorbatchev.com/pub/sh/current/scripts/shBrushJScript.js');
+        SyntaxHighlighter.all();
+    </script>
+    <script src="Class.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        // class extends Object if base is not specified
+        var Animal = Class.create({
+            constructor: function () {
+                console.info('In Animal constructor');
+                this.kingdom = 'Animalia';
+                this.who = 'I am an ' + this.toType();
+            },
+            prototype: function () {
+                this.toString = function () {
+                    return '[object Animal]';
+                };
+
+                this.toType = function () {
+                    return this.toString().match(/\s([a-zA-Z]+)/)[1].toLowerCase();
+                };
+
+                this.feed = function (food) {
+                    console.info('In Animal.prototype.feed()');
+                    console.log(this.toType(), 'consumes', food);
+                };
+            }
+        });
+
+        var Primate = Class.create({
+            base: Animal, // Primate extends Animal
+            constructor: function () {
+                // call super ctor, executing Animal() before Primate()
+                this._base.apply(this, arguments);
+
+                console.info('In Primate constructor');
+                this.order = 'Primates';
+                // this.who will override the base property
+                // while this.toType() will execute the base method
+                this.who = 'I am a ' + this.toType();
+            },
+            prototype: function () {
+                this.toString = function () {
+                    return '[object Primate]';
+                };
+
+                this.say = function (message) {
+                    console.info('In Primate.prototype.say()');
+                    console.log(this.toType(), 'says:', message);
+                };
+
+                this.burp = function () {
+                    console.info('In Primate.prototype.burp()');
+                    console.log(this.toType(), 'burps');
+                };
+            }
+        });
+
+        var Human = Class.create({
+            base: Primate, // Human extends Primate
+            constructor: function () {
+                // call super ctor, executing Primate() before Human()
+                this._base.apply(this, arguments);
+
+                console.info('In Human constructor');
+                this.species = 'Homo sapiens';
+            },
+            // first argument represents the base prototype,
+            // or may be omitted if base prototype isn't needed
+            prototype: function (_base) {
+                this.toString = function () {
+                    return '[object Human]';
+                };
+
+                this.say = function (message) {
+                    // log Human before Primate
+                    console.info('In Human.prototype.say()');
+
+                    // execute base method
+                    _base.say.apply(this, arguments);
+                };
+
+                this.think = function (thought) {
+                    console.info('In Human.prototype.think()');
+                    console.log(this.toType(), 'thinks about', thought);
+                };
+            }
+        });
+    </script>
+    <script type="text/javascript">
+        (function(){
+            console.warn('Instantiating "a" as Animal...');
+            var a = new Animal();
+            console.log('a: ', a); // notice name of the class in debug tool
+            console.log('a instanceof Animal: ', a instanceof Animal); // true
+            console.log('a.who: ', a.who); // I am an animal
+            console.warn("Calling a.feed('stuff')...");
+            a.feed('stuff'); // Animal consumes stuff
+
+            console.warn('Instantiating "b" as Primate...');
+            var b = new Primate();
+            console.log('b: ', b); // notice name of the class in debug tool
+            console.log('b instanceof Primate: ', b instanceof Primate); // true
+            console.log('b instanceof Animal: ', b instanceof Animal); // true
+            console.log('b.who: ', b.who); // I am a primate
+            console.warn("Calling b.feed('figs')...");
+            b.feed('figs'); // Primate consumes figs
+            console.warn("Calling b.burp()...");
+            b.burp(); // Primate burps
+            console.warn("Calling b.say('uh')...");
+            b.say('uh'); // Primate says: uh
+
+            console.warn('Instantiating "c" as Human...');
+            var c = new Human();
+            console.log('c: ', c); // notice name of the class in debug tool
+            console.log('c instanceof Human: ', c instanceof Human); // true
+            console.log('c instanceof Primate: ', c instanceof Primate); // true
+            console.log('c instanceof Animal: ', c instanceof Animal); // true
+            console.log('c.who: ', c.who); // I am a human
+            console.warn("Calling c.feed('beer')...");
+            c.feed('beer'); // Human consumes beer
+            console.warn("Calling c.burp()...");
+            c.burp(); // Human burps
+            console.warn("Calling c.say('hello')...");
+            c.say('hello'); // Human says: hello
+            console.warn("Calling c.think('the meaning of life')...");
+            c.think('the meaning of life'); // Human thinks about the meaning of life
+        })();
+    </script>
+</body>
+</html>
