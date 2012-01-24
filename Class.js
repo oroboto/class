@@ -32,6 +32,8 @@
             if (!members) { return; }
 
             var base = members.base || Object, // all prototype chains lead to Object
+                baseCtor = base.prototype.constructor,
+                ctor = members.hasOwnProperty('constructor') ? members.constructor : baseCtor,
                 proto = members.prototype,
 
                 // subclass constructor
@@ -44,7 +46,7 @@
                         }
                     }
 
-                    // inherit base methods
+                    // inherit prototype
                     function Class() {} // constructor to host base prototype
                     Class.prototype = child.__base__ = parent.prototype;
                     child.prototype = new Class;
@@ -52,10 +54,10 @@
                     return child;
                 }(function () { // pass modified constructor as argument to subclass function
                     // add base constructor to object so subclass can call it
-                    this._base = base.prototype.constructor;
+                    this._base = baseCtor;
 
                     // execute original constructor
-                    members.constructor.apply(this, arguments);
+                    ctor.apply(this, arguments);
                 }, base);
 
             // add members to prototype
