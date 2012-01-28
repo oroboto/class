@@ -9,9 +9,9 @@ Features
 
 (or, "There are a dozen other implementations for class-based inheritance in JavaScript, why should I use this?")
 
-* **SMALL!** 279 bytes minified and gzipped
 * override base prototype members without affecting base prototype itself
 * support for private properties and methods
+* Class can be added to a namespace to keep global scope clean
 
 
 Usage
