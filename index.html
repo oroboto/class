@@ -4,7 +4,11 @@
 <head>
     <meta charset="utf-8" />
     <title>Class</title>
+    <link href="//alexgorbatchev.com/pub/sh/current/styles/shCore.css" rel="stylesheet" type="text/css" />
     <link href="//alexgorbatchev.com/pub/sh/current/styles/shThemeDefault.css" rel="stylesheet" type="text/css" />
+    <style type="text/css" media="screen">
+        body {font:14px Arial, sans-serif; margin:0 auto; width:960px;}
+    </style>
 </head>
 <body>
     <header>
@@ -28,7 +32,7 @@
     <h3>Usage</h3>
     <p>Open your console to see these classes in action.</p>
     <h4>Creating a base class</h4>
-    <pre class="brush: js">
+    <pre class="brush: js; highlight: [2, 3, 8];">
         // class extends Object if base is not specified
         var Animal = Class.create({
             constructor: function () {
@@ -53,7 +57,7 @@
         });
     </pre>
     <h4>Creating subclasses</h4>
-    <pre class="brush: js">
+    <pre class="brush: js; highlight: [2];">
         var Primate = Class.create({
             base: Animal, // Primate extends Animal
             constructor: function () {
@@ -82,7 +86,9 @@
                 };
             }
         });
-
+    </pre>
+    <h4>Using base (super) class constructor/methods from subclass</h4>
+    <pre class="brush: js; highlight: [4, 5, 10, 11, 12, 22];">
         var Human = Class.create({
             base: Primate, // Human extends Primate
             constructor: function (species) {
@@ -115,7 +121,7 @@
         });
     </pre>
     <h4>Private variables and functions, and no constructor</h4>
-    <pre class="brush: js">
+    <pre class="brush: js; highlight: [3, 5, 6, 8, 9, 10, 11, 24, 25];">
         var BigMouth = Class.create({
             base: Human, // BigMouth extends Human
             // classes without constructors execute the base constructor
@@ -139,7 +145,7 @@
                     // execute base method
                     _base.say.apply(this, arguments);
 
-                    // execute private function
+                    // execute private function (apply or call must be used to bind instance scope)
                     tellSecret.apply(this);
                 };
             }
@@ -155,6 +161,7 @@
     <script src="//alexgorbatchev.com/pub/sh/current/scripts/shAutoloader.js" type="text/javascript"></script>
     <script type="text/javascript">
         SyntaxHighlighter.autoloader('js //alexgorbatchev.com/pub/sh/current/scripts/shBrushJScript.js');
+        SyntaxHighlighter.defaults['toolbar'] = false;
         SyntaxHighlighter.all();
     </script>
     <script src="Class.js" type="text/javascript"></script>
@@ -265,7 +272,7 @@
                     // execute base method
                     _base.say.apply(this, arguments);
 
-                    // execute private function
+                    // execute private function (apply or call must be used to bind instance scope)
                     tellSecret.apply(this);
                 };
             }
