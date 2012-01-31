@@ -132,7 +132,7 @@ Usage
                 // execute base method
                 _base.say.apply(this, arguments);
 
-                // execute private function
+                // execute private function (apply or call must be used to bind instance scope)
                 tellSecret.apply(this);
             };
         }
