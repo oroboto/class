@@ -75,6 +75,9 @@ Usage
         }
     });
 
+
+### Using base (super) class constructor/methods from subclass ###
+
     var Human = Class.create({
         base: Primate, // Human extends Primate
         constructor: function (species) {
