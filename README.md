@@ -117,7 +117,7 @@ Usage
         // classes without constructors execute the base constructor
         prototype: function (_base) {
             // private variable
-            var secret = 'Soylent Green is people!.';
+            var secret = 'Soylent Green is people!';
 
             // private function
             var tellSecret = function () {
